@@ -150,6 +150,21 @@ describe("POST /users", function () {
   });
 });
 
+
+/************************************** POST /users/:username/jobs/:id */
+
+describe("POST /users/:username/jobs/:id", function () {
+  test("works for users: apply", async function () {
+    const resp = await request(app)
+      .post("/users/u1/jobs/2")
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(201);
+    expect(resp.body).toEqual({
+      applied: 2
+    });
+  });
+});
+
 /************************************** GET /users */
 
 describe("GET /users", function () {
@@ -196,7 +211,10 @@ describe("GET /users/:username", function () {
       .get(`/users/u1`)
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.body).toEqual({
-      user: u1,
+      user: {
+        ...u1,
+        jobs: [1]
+      },
     });
   });
 
@@ -206,7 +224,10 @@ describe("GET /users/:username", function () {
       .get(`/users/u2`)
       .set("authorization", `Bearer ${u2Token}`);
     expect(resp.body).toEqual({
-      user: u2,
+      user: {
+        ...u2,
+        jobs: []
+      },
     });
   });
 

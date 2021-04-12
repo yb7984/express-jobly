@@ -105,6 +105,35 @@ describe("register", function () {
   });
 });
 
+
+/************************************** applyJob */
+
+describe("applyJob", function () {
+
+  test("works", async function () {
+    let result = await User.applyJob("u1", 2);
+    expect(result).toEqual({
+      username: "u1",
+      jobId: 2
+    });
+    const found = await db.query("SELECT * FROM applications WHERE username = 'u1' AND job_id = 2");
+    expect(found.rows.length).toEqual(1);
+    expect(found.rows[0].username).toEqual("u1");
+    expect(found.rows[0].job_id).toEqual(2);
+  });
+
+  test("bad request with dup data", async function () {
+    try {
+      await User.applyJob("u1", 2);
+      await User.applyJob("u1", 2);
+      fail();
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  });
+});
+
+
 /************************************** findAll */
 
 describe("findAll", function () {
@@ -132,7 +161,7 @@ describe("findAll", function () {
 /************************************** get */
 
 describe("get", function () {
-  test("works", async function () {
+  test("works w jobs", async function () {
     let user = await User.get("u1");
     expect(user).toEqual({
       username: "u1",
@@ -140,8 +169,23 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
+      jobs: [1]
     });
   });
+
+
+  test("works without jobs", async function () {
+    let user = await User.get("u2");
+    expect(user).toEqual({
+      username: "u2",
+      firstName: "U2F",
+      lastName: "U2L",
+      email: "u2@email.com",
+      isAdmin: false,
+      jobs: []
+    });
+  });
+
 
   test("not found if no such user", async function () {
     try {
@@ -215,7 +259,7 @@ describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
     const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
+      "SELECT * FROM users WHERE username='u1'");
     expect(res.rows.length).toEqual(0);
   });
 
