@@ -70,15 +70,15 @@ function ensureRightUserLoggedIn(req, res, next) {
       throw new UnauthorizedError();
     }
 
-    if (!res.locals.user.isAdmin &&
-      (
-        req.params.username === undefined ||
+    if (!res.locals.user.isAdmin) {
+      if (req.params.username === undefined ||
         req.params.username !== res.locals.user.username
-      )
-    ) {
-      //not admin, not the current user
-      throw new UnauthorizedError();
+      ) {
+        //not admin, not the current user
+        throw new UnauthorizedError();
+      }
     }
+
     return next();
   } catch (err) {
     return next(err);

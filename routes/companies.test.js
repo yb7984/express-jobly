@@ -42,6 +42,32 @@ const c3 = {
   logoUrl: "http://c3.img",
 };
 
+const j1 = {
+  id: 1,
+  title: "j1",
+  salary: 100000,
+  equity: "0",
+  companyHandle: "c1"
+};
+
+
+const j2 = {
+  id: 2,
+  title: "j2",
+  salary: 200000,
+  equity: "0.1",
+  companyHandle: "c2"
+};
+
+const j3 = {
+  id: 3,
+  title: "j3",
+  salary: 300000,
+  equity: "0.2",
+  companyHandle: "c3"
+};
+
+
 /************************************** POST /companies */
 
 describe("POST /companies", function () {
@@ -115,7 +141,7 @@ describe("GET /companies", function () {
 
 
     //search with name
-    resp = await request(app).get("/companies?name=c1");
+    resp = await request(app).get("/companies?nameLike=c1");
     expect(resp.body).toEqual({
       companies: [c1],
     });
@@ -136,13 +162,13 @@ describe("GET /companies", function () {
 
 
     //search with all available conditions but with empty input
-    resp = await request(app).get("/companies?name=&minEmployees=&maxEmployees=");
+    resp = await request(app).get("/companies?nameLike=&minEmployees=&maxEmployees=");
     expect(resp.body).toEqual({
       companies: [c1, c2, c3],
     });
 
     //search with all available conditions
-    resp = await request(app).get("/companies?name=c&minEmployees=2&maxEmployees=2");
+    resp = await request(app).get("/companies?nameLike=c&minEmployees=2&maxEmployees=2");
     expect(resp.body).toEqual({
       companies: [c2],
     });
@@ -183,14 +209,20 @@ describe("GET /companies/:handle", function () {
   test("works for anon", async function () {
     const resp = await request(app).get(`/companies/c1`);
     expect(resp.body).toEqual({
-      company: c1,
+      company: {
+        ...c1,
+        jobs: [j1]
+      },
     });
   });
 
   test("works for anon: company w/o jobs", async function () {
     const resp = await request(app).get(`/companies/c2`);
     expect(resp.body).toEqual({
-      company: c2,
+      company: {
+        ...c2,
+        jobs: [j2]
+      },
     });
   });
 

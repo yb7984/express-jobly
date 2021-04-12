@@ -70,7 +70,7 @@ class Company {
   static async find(conditions = {}) {
     if (
       conditions === undefined || (
-        conditions.name === undefined &&
+        conditions.nameLike === undefined &&
         conditions.minEmployees === undefined &&
         conditions.maxEmployees === undefined
       )
@@ -80,11 +80,11 @@ class Company {
 
     const searches = [];
 
-    if (conditions.name != undefined && conditions.name !== "") {
+    if (conditions.nameLike != undefined && conditions.nameLike !== "") {
       searches.push({
         field: "name",
         operator: "ILIKE",
-        value: conditions.name
+        value: conditions.nameLike
       });
     }
 
@@ -162,14 +162,27 @@ class Company {
                   name,
                   description,
                   num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
+                  logo_url AS "logoUrl" , 
+                  id , 
+                  title , 
+                  salary , 
+                  equity , 
+                  company_handle as "companyHandle"
+           FROM companies JOIN jobs ON handle = company_handle
            WHERE handle = $1`,
       [handle]);
 
-    const company = companyRes.rows[0];
+    if (companyRes.rows.length === 0) {
+      throw new NotFoundError(`No company: ${handle}`);
+    }
+    const { name, description, numEmployees, logoUrl } = companyRes.rows[0];
+    const company = { handle, name, description, numEmployees, logoUrl };
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    company.jobs = companyRes.rows.map(r => {
+      const { id, title, salary, equity, companyHandle } = r;
+
+      return { id, title, salary, equity, companyHandle };
+    });
 
     return company;
   }

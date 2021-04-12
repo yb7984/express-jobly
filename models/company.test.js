@@ -40,6 +40,14 @@ const c3 = {
   logoUrl: "http://c3.img",
 };
 
+const j1 = {
+  id: 1,
+  title: "j1",
+  salary: 100000,
+  equity: "0",
+  companyHandle: "c1"
+};
+
 /************************************** create */
 
 describe("create", function () {
@@ -187,11 +195,10 @@ describe("get", function () {
   test("works", async function () {
     let company = await Company.get("c1");
     expect(company).toEqual({
-      handle: "c1",
-      name: "C1",
-      description: "Desc1",
-      numEmployees: 1,
-      logoUrl: "http://c1.img",
+      ...c1,
+      jobs: [
+        j1
+      ]
     });
   });
 
