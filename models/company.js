@@ -88,7 +88,7 @@ class Company {
       });
     }
 
-    if (conditions.minEmployees !== undefined) {
+    if (conditions.minEmployees !== undefined && !isNaN(conditions.minEmployees)) {
       searches.push({
         field: "num_employees",
         operator: ">=",
@@ -96,7 +96,12 @@ class Company {
       });
     }
 
-    if (conditions.maxEmployees !== undefined ) {
+    if (conditions.maxEmployees !== undefined && !isNaN(conditions.maxEmployees)) {
+
+      if (conditions.minEmployees !== undefined &&
+        conditions.maxEmployees < conditions.minEmployees) {
+          throw new BadRequestError("maxEmployees must no less than minEmployees");
+      }
       searches.push({
         field: "num_employees",
         operator: "<=",

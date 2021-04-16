@@ -165,28 +165,6 @@ describe("find", function () {
       .rejects
       .toThrow(BadRequestError);
   });
-
-  test("not works: invalid input of minEmployees or maxEmployees", async function () {
-
-    await expect(Company.find({ minEmployees: 'aaa' }))
-      .rejects
-      .toThrow(BadRequestError);
-
-
-    await expect(Company.find({ minEmployees: '-1' }))
-      .rejects
-      .toThrow(BadRequestError);
-
-
-    await expect(Company.find({ maxEmployees: 'aaa' }))
-      .rejects
-      .toThrow(BadRequestError);
-
-
-    await expect(Company.find({ maxEmployees: '-1' }))
-      .rejects
-      .toThrow(BadRequestError);
-  });
 });
 
 /************************************** get */

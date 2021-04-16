@@ -174,8 +174,8 @@ describe("GET /jobs", function () {
             jobs: [j1, j2, j3],
         });
 
-        //search with all available conditions but with empty input
-        resp = await request(app).get("/jobs?titleLike=&minSalary=&hasEquity=");
+        //search with titleLike with empty input
+        resp = await request(app).get("/jobs?titleLike=");
         expect(resp.body).toEqual({
             jobs: [j1, j2, j3],
         });
@@ -190,11 +190,9 @@ describe("GET /jobs", function () {
         resp = await request(app).get("/jobs?minSalary=aa");
         expect(resp.status).toBe(400);
 
-        //search with invalid conditions, ignore it.
+        //search with invalid conditions, throw error.
         resp = await request(app).get("/jobs?description=ccs");
-        expect(resp.body).toEqual({
-            jobs: [j1, j2, j3],
-        });
+        expect(resp.status).toBe(400);
     });
 });
 

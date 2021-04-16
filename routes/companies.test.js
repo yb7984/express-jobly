@@ -161,8 +161,8 @@ describe("GET /companies", function () {
     });
 
 
-    //search with all available conditions but with empty input
-    resp = await request(app).get("/companies?nameLike=&minEmployees=&maxEmployees=");
+    //search with nameLike with empty input
+    resp = await request(app).get("/companies?nameLike=");
     expect(resp.body).toEqual({
       companies: [c1, c2, c3],
     });
@@ -184,11 +184,9 @@ describe("GET /companies", function () {
     resp = await request(app).get("/companies?minEmployees=2&maxEmployees=1");
     expect(resp.status).toBe(400);
 
-    //search with invalid conditions, ignore it.
+    //search with invalid conditions, throw error.
     resp = await request(app).get("/companies?description=ccs");
-    expect(resp.body).toEqual({
-      companies: [c1, c2, c3],
-    });
+    expect(resp.status).toBe(400);
   });
 
   test("fails: test next() handler", async function () {
