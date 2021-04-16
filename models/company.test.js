@@ -112,7 +112,7 @@ describe("find", function () {
   test("works: filter name", async function () {
     let companies = await Company.find(
       {
-        name: "c1"
+        nameLike: "c1"
       }
     );
     expect(companies).toEqual([c1]);

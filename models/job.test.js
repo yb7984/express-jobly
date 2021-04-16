@@ -137,9 +137,10 @@ describe("find", function () {
     test("works: filter title", async function () {
         let jobs = await Job.find(
             {
-                title: "j1"
+                titleLike: "j1"
             }
         );
+
         expect(jobs).toEqual([j1]);
     });
 
@@ -174,7 +175,7 @@ describe("find", function () {
     test("works: all filters", async function () {
         let jobs = await Job.find(
             {
-                title: "3" , 
+                titleLike: "3" , 
                 minSalary : 200000 , 
                 hasEquity : true 
             }
