@@ -78,27 +78,15 @@ class Job {
 
         let minSalary = -1;
 
-        if (conditions.minSalary !== undefined &&
-            conditions.minSalary !== "") {
-            if (isNaN(parseInt(conditions.minSalary))) {
-                throw new BadRequestError("minSalary must be an integer");
-            }
-
-            minSalary = parseInt(conditions.minSalary);
-
-            if (minSalary < 0) {
-                throw new BadRequestError("minSalary must be no less than 0");
-            }
-
+        if (conditions.minSalary !== undefined) {
             searches.push({
                 field: "salary",
                 operator: ">=",
-                value: minSalary
+                value: conditions.minSalary
             });
         }
 
-        if (conditions.hasEquity !== undefined &&
-            (conditions.hasEquity === "true" || conditions.hasEquity === true)) {
+        if (conditions.hasEquity !== undefined && conditions.hasEquity === true) {
             searches.push({
                 field: "equity",
                 operator: "!=",

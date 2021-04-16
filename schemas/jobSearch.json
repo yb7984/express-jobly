@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://our.company.com/jobSearch.schema.json",
+  "type": "object",
+  "properties": {
+    "titleLike": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "minSalary": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "hasEquity": {
+      "type": "string",
+      "pattern": "^(true|false)$"
+    }
+  },
+  "additionalProperties": false,
+  "required": []
+}

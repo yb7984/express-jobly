@@ -88,48 +88,19 @@ class Company {
       });
     }
 
-    let minEmployees = -1;
-    let maxEmployees = -1;
-
-    if (conditions.minEmployees !== undefined &&
-      conditions.minEmployees !== "") {
-      if (isNaN(parseInt(conditions.minEmployees))) {
-        throw new BadRequestError("minEmployees must be an integer");
-      }
-
-      minEmployees = parseInt(conditions.minEmployees);
-
-      if (minEmployees < 0) {
-        throw new BadRequestError("minEmployees must be no less than 0");
-      }
-
+    if (conditions.minEmployees !== undefined) {
       searches.push({
         field: "num_employees",
         operator: ">=",
-        value: minEmployees
+        value: conditions.minEmployees
       });
     }
 
-    if (conditions.maxEmployees !== undefined &&
-      conditions.maxEmployees !== "") {
-      if (isNaN(parseInt(conditions.maxEmployees))) {
-        throw new BadRequestError("maxEmployees must be an integer");
-      }
-
-      maxEmployees = parseInt(conditions.maxEmployees);
-
-      if (maxEmployees < 0) {
-        throw new BadRequestError("maxEmployees must be no less than 0");
-      }
-
-      if (maxEmployees < minEmployees) {
-        throw new BadRequestError("maxEmployees must be no less than minEmployees");
-      }
-
+    if (conditions.maxEmployees !== undefined ) {
       searches.push({
         field: "num_employees",
         operator: "<=",
-        value: maxEmployees
+        value: conditions.maxEmployees
       });
     }
 

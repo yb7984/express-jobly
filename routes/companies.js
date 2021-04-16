@@ -6,9 +6,10 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureLoggedIn , ensureAdminLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, ensureAdminLoggedIn } = require("../middleware/auth");
 const Company = require("../models/company");
 
+const companySearchSchema = require("../schemas/companySearch.json");
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
 
@@ -52,7 +53,30 @@ router.post("/", ensureAdminLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
-    const companies = await Company.find(req.query);
+    const validator = jsonschema.validate(req.query, companySearchSchema);
+
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+
+    const searches = { ...req.query };
+
+    if (searches.minEmployees !== undefined) {
+      searches.minEmployees = parseInt(searches.minEmployees);
+    }
+
+    if (searches.maxEmployees != undefined) {
+      searches.maxEmployees = parseInt(searches.maxEmployees);
+    }
+
+    if (searches.minEmployees !== undefined &&
+      searches.maxEmployees !== undefined &&
+      searches.minEmployees > searches.maxEmployees) {
+      throw new BadRequestError("maxEmployees must be no less than minEmployees");
+    }
+
+    const companies = await Company.find(searches);
 
     return res.json({ companies });
   } catch (err) {
